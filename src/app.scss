@@ -31,3 +31,6 @@
 @import 'bootstrap/scss/placeholders';
 @import 'bootstrap/scss/helpers';
 @import 'bootstrap/scss/utilities/api';
+
+$bootstrap-icons-font-dir: "$fonts/";
+@import 'bootstrap-icons/font/bootstrap-icons.scss';

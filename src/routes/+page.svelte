@@ -246,7 +246,9 @@
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 	<div class="container-fluid">
-		<a class="navbar-brand" href={null}>0816 Feeder Console</a>
+		<span class="navbar-brand"
+			><a href="https://github.com/konkers/0816-web-console"><i class="bi me-2 bi-github"></i></a
+			>0816 Feeder Console</span>
 		<form class="d-flex">
 			<select class="me-2" hidden={!connected || feeders.length <= 0} bind:value={selectedFeeder}>
 				{#each feeders as _, i}
