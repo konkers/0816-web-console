@@ -422,10 +422,6 @@
 		width: 100%;
 	}
 
-	.advance {
-		width: 80%;
-	}
-
 	.modal {
 		display: block;
 	}
