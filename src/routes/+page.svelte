@@ -21,6 +21,8 @@
 	let serialLog: string = '';
 	let logElement: Element;
 
+	let errorText: string = '';
+
 	let progressText: string = '';
 	let progressShown: boolean = false;
 
@@ -48,11 +50,27 @@
 	});
 
 	async function connect() {
-		port = await navigator.serial.requestPort();
-		console.log(port);
-		// - Wait for the port to open.
-		await port.open({ baudRate: 115200 });
-		console.log(port);
+		try {
+			port = await navigator.serial.requestPort();
+			console.log(port);
+			// - Wait for the port to open.
+			await port.open({ baudRate: 115200 });
+			console.log(port);
+		} catch {
+			errorText = "Couldn't open serial port.";
+			return;
+		}
+
+		if (port.readable === null) {
+			errorText = 'Serial port is not readable.';
+			disconnect();
+			return;
+		}
+		if (port.writable === null) {
+			errorText = 'Serial port is not writeable';
+			disconnect();
+			return;
+		}
 
 		let decoder = new TextDecoderStream();
 		inputDone = port.readable.pipeTo(decoder.writable);
@@ -66,7 +84,9 @@
 
 		const discovered = await discoverFeeders();
 		if (discovered.isErr) {
+			errorText = `Failed to discover feeders: ${discovered.error}`;
 			disconnect();
+			return;
 		}
 
 		feeders = discovered.value;
@@ -212,6 +232,10 @@
 		return Result.ok(feeders);
 	}
 
+	function clearError() {
+		errorText = '';
+	}
+
 	async function advanceFeeder() {
 		await executeGCode(`M600 N${selectedFeeder} F${feederAdvanceValues[selectedFeeder]}`);
 	}
@@ -354,6 +378,26 @@
 		</div>
 	</div>
 
+	{#if errorText}
+		<div class="modal" id="errorModal" tabindex="-1" role="dialog" hidden={false}>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Error</h5>
+					</div>
+					<div class="modal-body">{errorText}</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+							on:click={clearError}>Ok</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-backdrop show" />
+	{/if}
 	{#if notSupported}
 		<div class="modal" id="notSupportedModal" tabindex="-1" role="dialog" hidden={false}>
 			<div class="modal-dialog">
