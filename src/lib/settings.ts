@@ -9,6 +9,7 @@ export interface Settings {
 	pwm_0?: number,
 	pwm_180?: number,
 	ignore_feedback_pin?: boolean,
+	always_retract?: boolean,
 }
 
 const settingsRegex = /M620 (.*)/;
@@ -50,6 +51,8 @@ export function parseFeederConfig(response: string): Result<[number, Settings]> 
 			settings.pwm_180 = parseFloat(value);
 		} else if (code === "X") {
 			settings.ignore_feedback_pin = parseInt(value) != 0;
+		} else if (code === "Y") {
+			settings.always_retract = parseInt(value) != 0;
 		} else {
 			console.log(`unknown code ${code}`);
 			return Result.err();
@@ -95,6 +98,13 @@ export function gcodeForSettings(index: number, settings: Settings): string {
 			gcode += ` X1`;
 		} else {
 			gcode += ` X0`;
+		}
+	}
+	if (settings.always_retract != null) {
+		if (settings.always_retract) {
+			gcode += ` Y1`;
+		} else {
+			gcode += ` Y0`;
 		}
 	}
 
