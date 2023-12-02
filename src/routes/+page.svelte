@@ -341,9 +341,16 @@
 							<NumberInput bind:value={feeders[selectedFeeder].pwm_180}
 								>Pwm Value at 180°</NumberInput>
 						</div>
+					</div>
+					<div class="row align-items-center">
 						<div class="col-6">
 							<CheckboxInput bind:checked={feeders[selectedFeeder].ignore_feedback_pin}>
 								Ignore Feedback Pin?
+							</CheckboxInput>
+						</div>
+						<div class="col-6">
+							<CheckboxInput bind:checked={feeders[selectedFeeder].always_retract}>
+								Always Retract?
 							</CheckboxInput>
 						</div>
 					</div>
